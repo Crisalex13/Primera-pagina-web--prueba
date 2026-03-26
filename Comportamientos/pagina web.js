@@ -2,8 +2,8 @@
 // ================================================================
 //  SESION — leer ANTES de cualquier otra cosa
 // ================================================================
-const _session = localStorage.getItem('sn_session');
-if (!_session) { window.location.href = 'signin.html'; }
+//const _session = localStorage.getItem('sn_session');
+//if (!_session) { window.location.href = 'signin.html'; }
 
 const _user    = JSON.parse(_session || '{}');
 const _isAdmin = _user.role === 'admin';
@@ -305,3 +305,22 @@ document.getElementById('catFilter').addEventListener('change', function() {
 //  INIT
 // ================================================================
 renderGrid();
+
+// ── DROPDOWN MENÚ ──
+function toggleMenu() {
+  const menu = document.getElementById('dropdownMenu');
+  const avatar = document.querySelector('.avatar-wrap');
+  const rect = avatar.getBoundingClientRect();
+  menu.style.top  = (rect.bottom + 8) + 'px';
+  menu.style.left = rect.left + 'px';
+  menu.classList.toggle('open');
+}
+
+// Cerrar al hacer clic fuera
+document.addEventListener('click', function(e) {
+  const menu   = document.getElementById('dropdownMenu');
+  const avatar = document.querySelector('.avatar-wrap');
+  if (!avatar.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});

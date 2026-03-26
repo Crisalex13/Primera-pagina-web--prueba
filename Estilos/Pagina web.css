@@ -1,4 +1,4 @@
-    /* Estilos adicionales */
+/* Estilos adicionales */
     :root {
       --bg:#0a0a0f; --bg2:#12121a; --bg3:#1a1a26;
       --card:#16161f; --card2:#1e1e2e;
@@ -11,102 +11,109 @@
       --fb:'DM Sans',sans-serif;
     }
 
-    /* imagenes tipo clase  */
-    .logoleon{
-        width: 80px; height: 70px; border-radius: 50%;
+    /* Cuerpo */
+    body{
+      margin:0;
+      background: linear-gradient(120deg,#1e1e2f,#2a2a40);
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* menu*/
-    body{
-    margin:0;
-    height:100vh;
-    background: linear-gradient(120deg,#1e1e2f,#2a2a40);
-    font-family: Arial, Helvetica, sans-serif;
-}
+    *,*::before,*::after{box-sizing:border-box; margin:0; padding:0;}
+    body{background:var(--bg); color:var(--text); font-family:var(--fb); font-size:15px; line-height:1.6; min-height:100vh;}
 
-/* SIDEBAR */
-.sidebar{
-    position: fixed;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    width: 70px;
-    height: 320px;
-    background: linear-gradient(180deg,#6a00ff,#00d4ff);
-    border-radius: 0 40px 40px 0;
-    transition: width 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
+    /* ── AVATAR WRAP ── */
+    .avatar-wrap {
+        position: relative;
+        display: inline-block;
+        width: 80px;
+        height: 70px;
+        flex-shrink: 0;
+        z-index: 200;
+        cursor: pointer;
+    }
 
-/* EFECTO CURVA MÁGICA */
-.sidebar::before{
-    content:"";
-    position:absolute;
-    top:0;
-    right:-40px;
-    width:80px;
-    height:100%;
-    background: inherit;
-    border-radius:50%;
-    transition: right 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-}
+    /* Imagen */
+    .logoleon {
+        width: 80px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        border: 2px solid rgba(255,255,255,0.15);
+    }
 
-/* EXPANSIÓN */
-.sidebar:hover{
-    width: 220px;
-}
+    /* Flechita inferior derecha */
+    .avatar-wrap::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 22px;
+        height: 22px;
+        background-color: #4a4a5a;
+        border-radius: 50%;
+        border: 2px solid #0a0a0f;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-size: 18px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
 
-.sidebar:hover::before{
-    right:-20px;
-}
+    /* ── DROPDOWN MENÚ ── */
+    .dropdown-menu {
+        display: none;
+        position: fixed;
+        top: 75px;
+        left: 10px;
+        width: 220px;
+        background-color: #1e1e2e;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 300;
+        overflow: hidden;
+        animation: fadeIn .2s ease;
+    }
 
-/* MENU */
-.menu{
-    list-style:none;
-    padding:0;
-    margin:0;
-    position:relative;
-    top:50%;
-    transform: translateY(-50%);
-}
+    .dropdown-menu.open {
+        display: block;
+    }
 
-.menu li{
-    padding:20px;
-    display:flex;
-    align-items:center;
-    color:white;
-    cursor:pointer;
-    transition: background 0.3s;
-}
+    /* MENU */
+    .menu {
+        list-style: none;
+        padding: 8px 0;
+        margin: 0;
+    }
 
-.menu li:hover{
-    background: rgba(255,255,255,0.2);
-}
+    .menu li {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        font-size: 0.95rem;
+    }
 
-.menu i{
-    font-size:20px;
-    min-width:40px;
-    text-align:center;
-}
+    .menu li:hover {
+        background: rgba(255,255,255,0.08);
+    }
 
-.menu span{
-    opacity:0;
-    transition: opacity 0.3s;
-    white-space:nowrap;
-}
+    .menu i {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+        color: var(--accent);
+    }
 
-.sidebar:hover .menu span{
-    opacity:1;
-}
-
-
-    /* Fondo de pantalla*/
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh;}
+    .menu span {
+        white-space: nowrap;
+    }
 
     /* HEADER */
-    .header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+    .header{position:sticky;top:0;z-index:150;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
     .header-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;padding:1rem 2rem;}
     .logo{font-family:var(--fd);font-size:1.6rem;font-weight:900;letter-spacing:-1px;}
     .logo span{color:var(--accent);}
