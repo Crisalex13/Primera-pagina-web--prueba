@@ -1,47 +1,27 @@
-
 // ================================================================
-//  SESION — leer ANTES de cualquier otra cosa
+//  SESION
 // ================================================================
-//const _session = localStorage.getItem('sn_session');
-//if (!_session) { window.location.href = 'signin.html'; }
+const _session = localStorage.getItem('sn_session');
 
 const _user    = JSON.parse(_session || '{}');
 const _isAdmin = _user.role === 'admin';
 
-// Mostrar info en header
 document.getElementById('userName').textContent = _user.name || _user.email || '';
 const badge = document.getElementById('roleBadge');
 badge.textContent = _isAdmin ? 'Administrador' : 'Usuario';
 badge.className   = 'badge ' + (_isAdmin ? 'badge-admin' : 'badge-user');
 
-// Ocultar "Agregar" si no es admin
 if (!_isAdmin) {
   document.getElementById('navAgregar').style.display = 'none';
+  document.getElementById('btnRegister').style.display = 'none';
 }
 
-// Logout
 document.getElementById('btnLogout').addEventListener('click', function() {
   if (confirm('Seguro que deseas cerrar sesion?')) {
     localStorage.removeItem('sn_session');
     window.location.href = 'signin.html';
   }
 });
-
-// menu
-const list = document.querySelectorAll('.list');
-const indicator = document.querySelector('.indicator');
-
-function activeLink() {
-  list.forEach((item) => item.classList.remove('active'));
-  this.classList.add('active');
-
-  let position = this.offsetTop;
-  indicator.style.top = position + "px";
-}
-
-list.forEach((item) =>
-  item.addEventListener('click', activeLink)
-);
 
 // ================================================================
 //  PRODUCTOS
@@ -51,15 +31,8 @@ let delId    = null;
 
 function saveProducts() { localStorage.setItem('sn_products', JSON.stringify(products)); }
 function uid() { return 'p' + Date.now() + Math.random().toString(36).substr(2,5); }
-
-function price(n) {
-  return '$' + Number(n).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-
-function icon(cat) {
-  return {'Electronica':'💻','Ropa':'👕','Hogar':'🏠','Deportes':'⚽','Alimentos':'🍎'}[cat] || '📦';
-}
-
+function price(n) { return '$' + Number(n).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function icon(cat) { return {'Electronica':'💻','Ropa':'👕','Hogar':'🏠','Deportes':'⚽','Alimentos':'🍎'}[cat] || '📦'; }
 function toast(msg, type='tok') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -67,7 +40,6 @@ function toast(msg, type='tok') {
   setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
-// Datos demo
 if (products.length === 0) {
   products = [
     { id:'p1', name:'iPhone 15 Pro',     category:'Electronica', price:24999, stock:12, sku:'ELEC-001', desc:'Smartphone con chip A17 Pro, camara de 48MP y titanio aeroespacial.', image:'https://images.unsplash.com/photo-1677945025779-97b5e4f9c028?w=600&q=80', createdAt:Date.now() },
@@ -130,6 +102,9 @@ function renderGrid(txt='', cat='') {
             ${p.stock<=5?'⚠ ':''}${p.stock} en stock
           </div>
         </div>
+        <button class="btn-comprar" onclick="event.stopPropagation();agregarAlCarrito('${p.id}')">
+          <i class="fas fa-cart-plus"></i> Agregar al carrito
+        </button>
       </div>
       ${_isAdmin ? `
       <div class="card-actions" onclick="event.stopPropagation()">
@@ -165,11 +140,13 @@ function showDetail(id) {
           <div class="meta-row"><i class="fas fa-calendar"></i><span class="meta-label">Agregado</span><span class="meta-val">${new Date(p.createdAt).toLocaleDateString('es-MX')}</span></div>
         </div>
         <div class="detail-btns">
+          <button class="btn btn-primary" onclick="agregarAlCarrito('${p.id}')">
+            <i class="fas fa-cart-plus"></i> Agregar al carrito
+          </button>
           ${_isAdmin
             ? `<button class="btn btn-outline-accent" onclick="editProduct('${p.id}')"><i class="fas fa-pen"></i> Editar</button>
                <button class="btn btn-danger" onclick="openDel('${p.id}')"><i class="fas fa-trash"></i> Eliminar</button>`
-            : `<div class="readonly-msg"><i class="fas fa-eye"></i> Solo lectura — contacta al administrador para modificar.</div>`
-          }
+            : ''}
         </div>
       </div>
     </div>
@@ -217,7 +194,6 @@ function cancelForm() { clearForm(); showView('catalog'); }
 document.getElementById('productForm').addEventListener('submit', function(e) {
   e.preventDefault();
   if (!_isAdmin) { toast('Solo el administrador puede realizar esta accion.','terr'); return; }
-
   let valid = true;
   const checks = [
     { id:'fName',  ok: v => v.trim()!=='' },
@@ -232,7 +208,6 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     else                  { el.classList.remove('ferr'); }
   });
   if (!valid) { toast('Completa todos los campos requeridos.','terr'); return; }
-
   const editId = document.getElementById('editId').value;
   const data = {
     name:     document.getElementById('fName').value.trim(),
@@ -243,7 +218,6 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     image:    document.getElementById('fImg').value.trim(),
     sku:      document.getElementById('fSku').value.trim(),
   };
-
   if (editId) {
     const i = products.findIndex(p=>p.id===editId);
     if (i>=0) products[i] = { ...products[i], ...data };
@@ -302,21 +276,163 @@ document.getElementById('catFilter').addEventListener('change', function() {
 });
 
 // ================================================================
-//  INIT
+//  CARRITO
 // ================================================================
-renderGrid();
+let cart = JSON.parse(localStorage.getItem('sn_cart') || '[]');
 
-// ── DROPDOWN MENÚ ──
+function saveCart() { localStorage.setItem('sn_cart', JSON.stringify(cart)); }
+
+function agregarAlCarrito(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const existing = cart.find(x => x.id === id);
+  if (existing) { existing.qty++; }
+  else { cart.push({ id:p.id, name:p.name, price:p.price, image:p.image, category:p.category, qty:1 }); }
+  saveCart();
+  renderCart();
+  toast(`"${p.name}" agregado al carrito 🛒`);
+}
+
+function quitarDelCarrito(id) {
+  cart = cart.filter(x => x.id !== id);
+  saveCart();
+  renderCart();
+}
+
+function cambiarQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) quitarDelCarrito(id);
+  else { saveCart(); renderCart(); }
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const countEl   = document.getElementById('cartCount');
+  const totalEl   = document.getElementById('cartTotal');
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const count = cart.reduce((s, x) => s + x.qty, 0);
+  countEl.textContent = count;
+  totalEl.textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits:2});
+  if (cart.length === 0) {
+    container.innerHTML = `<div class="cart-empty"><i class="fas fa-cart-shopping"></i><p>Tu carrito está vacío</p></div>`;
+    return;
+  }
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        ${item.image
+          ? `<img src="${item.image}" alt="${item.name}" onerror="this.parentElement.innerHTML='${icon(item.category)}'">`
+          : icon(item.category)}
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">${price(item.price)}</div>
+        <div class="cart-item-qty">
+          <button onclick="cambiarQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
+          <span>${item.qty}</span>
+          <button onclick="cambiarQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
+        </div>
+      </div>
+      <button class="cart-item-del" onclick="quitarDelCarrito('${item.id}')"><i class="fas fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('hidden');
+}
+
+function comprar() {
+  if (cart.length === 0) { toast('Tu carrito está vacío', 'terr'); return; }
+  const historial = JSON.parse(localStorage.getItem('sn_historial') || '[]');
+  historial.unshift({
+    fecha: new Date().toLocaleString('es-MX'),
+    productos: cart.map(x => `${x.name} x${x.qty}`).join(', '),
+    total: cart.reduce((s, x) => s + x.price * x.qty, 0)
+  });
+  localStorage.setItem('sn_historial', JSON.stringify(historial));
+  cart = [];
+  saveCart();
+  renderCart();
+  toggleCart();
+  toast('¡Compra realizada con éxito! 🎉');
+}
+
+// ================================================================
+//  PERFIL + HISTORIAL
+// ================================================================
+function togglePerfil() {
+  const modal = document.getElementById('modalPerfil');
+  modal.classList.toggle('hidden');
+  if (!modal.classList.contains('hidden')) renderPerfil();
+}
+
+function renderPerfil() {
+  document.getElementById('perfilName').textContent  = _user.name  || 'Usuario';
+  document.getElementById('perfilEmail').textContent = _user.email || '';
+  const pb = document.getElementById('perfilBadge');
+  pb.textContent = _isAdmin ? 'Administrador' : 'Usuario';
+  pb.className   = 'badge ' + (_isAdmin ? 'badge-admin' : 'badge-user');
+  const historial = JSON.parse(localStorage.getItem('sn_historial') || '[]');
+  const lista = document.getElementById('historialList');
+  if (historial.length === 0) {
+    lista.innerHTML = `<div class="historial-empty"><i class="fas fa-inbox"></i><br>Sin pedidos aún</div>`;
+    return;
+  }
+  lista.innerHTML = historial.map(h => `
+    <div class="historial-item">
+      <div class="historial-fecha"><i class="fas fa-calendar"></i> ${h.fecha}</div>
+      <div class="historial-productos">${h.productos}</div>
+      <div class="historial-total">${price(h.total)}</div>
+    </div>
+  `).join('');
+}
+
+// ================================================================
+//  CREAR CUENTA DESDE HEADER
+// ================================================================
+function toggleModalReg() {
+  document.getElementById('modalReg').classList.toggle('hidden');
+  document.getElementById('regMsg').textContent = '';
+  document.getElementById('regMsg').className = '';
+}
+
+function crearCuenta() {
+  const name  = document.getElementById('rName').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  const pass  = document.getElementById('rPass').value;
+  const pass2 = document.getElementById('rPass2').value;
+  const msg   = document.getElementById('regMsg');
+  if (!name || name.length < 2)       { msg.textContent = 'Nombre muy corto.'; msg.className='err'; return; }
+  if (!email || !email.includes('@')) { msg.textContent = 'Email no válido.';  msg.className='err'; return; }
+  if (!pass || pass.length < 6)       { msg.textContent = 'Mínimo 6 caracteres.'; msg.className='err'; return; }
+  if (pass !== pass2)                 { msg.textContent = 'Las contraseñas no coinciden.'; msg.className='err'; return; }
+  const users = JSON.parse(localStorage.getItem('sn_users') || '[]');
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+    msg.textContent = 'Este email ya está registrado.'; msg.className='err'; return;
+  }
+  users.push({ name, email, password: pass, role: 'user' });
+  localStorage.setItem('sn_users', JSON.stringify(users));
+  msg.textContent = '¡Cuenta creada exitosamente! 🎉';
+  msg.className = 'ok';
+  setTimeout(() => toggleModalReg(), 2000);
+}
+
+// ================================================================
+//  DROPDOWN MENÚ
+// ================================================================
 function toggleMenu() {
-  const menu = document.getElementById('dropdownMenu');
+  const menu   = document.getElementById('dropdownMenu');
   const avatar = document.querySelector('.avatar-wrap');
-  const rect = avatar.getBoundingClientRect();
+  const rect   = avatar.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 8) + 'px';
   menu.style.left = rect.left + 'px';
   menu.classList.toggle('open');
 }
 
-// Cerrar al hacer clic fuera
 document.addEventListener('click', function(e) {
   const menu   = document.getElementById('dropdownMenu');
   const avatar = document.querySelector('.avatar-wrap');
@@ -324,3 +440,9 @@ document.addEventListener('click', function(e) {
     menu.classList.remove('open');
   }
 });
+
+// ================================================================
+//  INIT
+// ================================================================
+renderGrid();
+renderCart();
