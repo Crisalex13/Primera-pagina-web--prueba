@@ -2,133 +2,149 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audio Studio</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>AudioStudio | Calidad en sonido</title>
+<!-- Font Awesome & Google Fonts -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="Estilos/Pagina web.css" rel="stylesheet">
-</head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="Estilos/Pagina web.css">
+</head>
 <body>
 
 <header class="header">
   <div class="header-inner">
+    <div class="list-container" id="menuContainer">
+      <button class="more-button" id="menuButton">
+        <div class="menu-icon-wrapper">
+          <div class="menu-icon-line half first"></div>
+          <div class="menu-icon-line"></div>
+          <div class="menu-icon-line half last"></div>
+        </div>
+      </button>
+      <ul class="more-button-list">
+        <li class="more-button-list-item"><i class="fas fa-sliders-h"></i> <span>Configuración</span></li>
+        <li class="more-button-list-item"><i class="fas fa-copy"></i> <span>Copiar</span></li>
+        <li class="more-button-list-item"><i class="fas fa-share-alt"></i> <span>Compartir</span></li>
+        <li class="more-button-list-item"><i class="fas fa-trash"></i> <span>Eliminar</span></li>
+      </ul>
+    </div>
+
     <div class="avatar-wrap">
-      <img class="logoleon" src="Imagenes/audio studio.png">
+      <img class="logoleon" src="https://placehold.co/200x200/6c3ce1/white?text=AS" alt="AudioStudio">
     </div>
 
     <div class="logo">Audio<span>Studio</span></div>
 
     <nav class="nav">
-      <a href="#" class="nav-link active">Catalogo</a>
+      <a href="#" class="nav-link active">Catálogo</a>
       <a href="#" class="nav-link">Agregar</a>
     </nav>
 
-    <button class="btn-perfil">
-      <i class="fas fa-user-circle"></i> Mi Perfil
-    </button>
+    <!-- TOGGLE DÍA/NOCHE DESLIZANTE -->
+    <div class="theme-switch-wrapper">
+      <span class="theme-icon"><i class="fas fa-sun"></i></span>
+      <label class="theme-switch">
+        <input type="checkbox" id="themeToggleCheckbox">
+        <span class="slider round"></span>
+      </label>
+      <span class="theme-icon"><i class="fas fa-moon"></i></span>
+    </div>
 
-    <button class="btn-register">
-      <i class="fas fa-user-plus"></i> Crear Cuenta
-    </button>
-
-    <button class="btn-logout">
-      <i class="fas fa-right-from-bracket"></i> Salir
-    </button>
-
+    <button class="btn-perfil"><i class="fas fa-user-circle"></i> Mi Perfil</button>
+    <button class="btn-register"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
-  <p class="hero-label">Coleccion 2026</p>
-  <h1 class="hero-title">Descubre<br>nuestros<br><em>productos</em></h1>
+  <p class="hero-label">🎧 Colección 2026</p>
+  <h1 class="hero-title">Escucha como<br>nunca antes<br><em>Calidad profesional</em></h1>
 </section>
 
-<!-- TOOLBAR -->
 <section class="toolbar">
   <div class="search-wrap">
     <i class="fas fa-search"></i>
-    <input type="text" placeholder="Buscar producto...">
+    <input type="text" id="searchInput" placeholder="Buscar producto...">
   </div>
-
-  <select class="filter">
-    <option>Todas las categorias</option>
-    <option>Electronica</option>
-    <option>Ropa</option>
-    <option>Hogar</option>
-    <option>Deportes</option>
-    <option>Alimentos</option>
-    <option>Otro</option>
-    </select>
+  <select class="filter" id="categoryFilter">
+    <option value="all">Todas las categorías</option>
+    <option value="audifonos">Audífonos</option>
+    <option value="parlantes">Parlantes</option>
+    <option value="microfonos">Micrófonos</option>
   </select>
 </section>
 
-<!-- MAIN -->
 <main class="main">
-
-  <div class="gallery">
-
-    <div class="card">
-      <img src="Imagenes/image-gen_34.webp">
+  <div class="gallery" id="productGallery">
+    <div class="card" data-category="audifonos">
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=250&fit=crop" alt="Audífonos">
       <div class="card-content">
-        <h3>Dark Chocolate</h3>
-        <p>Rich and intense flavor</p>
-        <button>Comprar</button>
+        <h3>Audífonos Pro X</h3>
+        <p>Sonido envolvente 3D, cancelación de ruido</p>
+        <button>Comprar <i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
-
-    <div class="card">
-      <div class="badge">Best Seller</div>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Milka_Alpine_Milk_Chocolate_bar_100g.jpg">
+    <div class="card" data-category="parlantes">
+      <div class="badge">Oferta</div>
+      <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400&h=250&fit=crop" alt="Parlante">
       <div class="card-content">
-        <h3>Milk Chocolate</h3>
-        <p>Creamy and sweet</p>
-        <button>Comprar</button>
+        <h3>Parlante Boom 360</h3>
+        <p>Potencia 80W, Bluetooth 5.2</p>
+        <button>Comprar <i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
-
-    <div class="card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/White_chocolate_with_rose_petals.jpg">
+    <div class="card" data-category="microfonos">
+      <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=250&fit=crop" alt="Micrófono">
       <div class="card-content">
-        <h3>White Chocolate</h3>
-        <p>Smooth and buttery</p>
-        <button>Comprar</button>
+        <h3>Micrófono StudioCast</h3>
+        <p>Patrón cardioide, ideal para podcast</p>
+        <button>Comprar <i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
-
+    <div class="card" data-category="audifonos">
+      <img src="https://images.unsplash.com/photo-1618366712010-f4c7e9f1d315?w=400&h=250&fit=crop" alt="Audífonos">
+      <div class="card-content">
+        <h3>Earbuds AirFloat</h3>
+        <p>Inalámbricos, 30h de batería</p>
+        <button>Comprar <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
   </div>
-
 </main>
 
 <footer class="footer">
   <div class="footer-container">
-    
     <div class="footer-logo">
       <h2>Audio<span>Studio</span></h2>
-      <p>Tu tienda de productos favoritos 2026</p>
+      <p>Tu experiencia sonora desde 2026</p>
     </div>
-
     <div class="footer-links">
       <h3>Enlaces</h3>
       <a href="#">Inicio</a>
       <a href="#">Catálogo</a>
       <a href="#">Contacto</a>
+      <a href="#">Garantía</a>
     </div>
-
     <div class="footer-social">
       <h3>Redes</h3>
       <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
       <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-      <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+      <a href="#"><i class="fab fa-tiktok"></i> TikTok</a>
     </div>
-
+    <div class="footer-map-col">
+      <h3><i class="fas fa-location-dot"></i> Encuéntranos</h3>
+      <div class="footer-map-wrap">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.559151371361!2d-99.1332!3d19.4326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff35f5bd1563%3A0x6c366f0e2de02ff7!2sCiudad%20de%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1700000000000" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="map-hint">📍 Ciudad de México · Cambia el mapa en el código</p>
+    </div>
   </div>
-
   <div class="footer-bottom">
-    <p>© 2026 AudioStudio - Todos los derechos reservados</p>
+    <p>© 2026 AudioStudio - Hecho con <i class="fas fa-heart" style="color:#dc2626"></i> para amantes del sonido</p>
   </div>
 </footer>
+
+<script src="Comportamientos/pagina web.js"></script>
 
 </body>
 </html>
