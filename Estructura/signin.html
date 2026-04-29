@@ -3,54 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ShopNova - Sign In</title>
+  <title>AudioStudio - Sign In</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="stylesheet" href="/Estilos/signin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../Estilos/signin.css">
 </head>
 <body>
 
 <div class="container">
 
-  <!-- IZQUIERDO -->
+  <!-- PANEL IZQUIERDO - LOGIN -->
   <div class="left">
-    <h2>Sign In</h2>
+    <h2>Bienvenido</h2>
     <div class="social-row">
       <button class="social-btn"><i class="fab fa-google"></i></button>
       <button class="social-btn"><i class="fab fa-facebook-f"></i></button>
       <button class="social-btn"><i class="fab fa-github"></i></button>
-      <button class="social-btn"><i class="fab fa-linkedin-in"></i></button>
+      <button class="social-btn"><i class="fab fa-apple"></i></button>
     </div>
-    <p class="or">or use your email password</p>
+    <p class="or">o usa tu email y contraseña</p>
 
     <form class="form" id="loginForm" novalidate>
       <div class="field">
-        <input type="email" id="iEmail" placeholder="Email" />
+        <input type="email" id="iEmail" placeholder="Email" autocomplete="email" />
         <span class="ico"><i class="fas fa-envelope"></i></span>
         <span class="errmsg" id="eEmail"></span>
       </div>
       <div class="field">
-        <input type="password" id="iPass" placeholder="Password" />
+        <input type="password" id="iPass" placeholder="Contraseña" autocomplete="current-password" />
         <span class="ico" id="togglePass"><i class="fas fa-eye-slash"></i></span>
         <span class="errmsg" id="ePass"></span>
       </div>
       <div class="alert-err hidden" id="alertErr">
         <i class="fas fa-circle-exclamation"></i>
-        <span id="alertMsg">Email o contrasena incorrectos.</span>
+        <span id="alertMsg">Email o contraseña incorrectos.</span>
       </div>
-      <a href="#" class="forgot" id="linkForgot">Forget Your Password?</a>
+      <a href="#" class="forgot" id="linkForgot">¿Olvidaste tu contraseña?</a>
       <button type="submit" class="btn-primary" id="btnSignIn">
-        <span id="btnTxt">SIGN IN</span>
+        <span id="btnTxt">INICIAR SESIÓN</span>
         <span id="btnSpin" class="hidden"><i class="fas fa-spinner fa-spin"></i></span>
       </button>
     </form>
   </div>
 
-  <!-- DERECHO -->
+  <!-- PANEL DERECHO - REGISTRO -->
   <div class="right">
     <div class="right-inner">
-      <h2>Hello, Friend!</h2>
-      <p>Register with your personal details to use all of site features</p>
-      <button class="btn-outline" id="btnSignUp">SIGN UP</button>
+      <h2>¡Hola, Amigo!</h2>
+      <p>Regístrate con tus datos personales para usar todas las funciones</p>
+      <button class="btn-outline" id="btnSignUp">CREAR CUENTA</button>
     </div>
   </div>
 
@@ -61,57 +62,57 @@
   <div class="modal-box">
     <button class="close-btn" id="closeReg"><i class="fas fa-xmark"></i></button>
     <h3>Crear Cuenta</h3>
-    <p class="sub">Registrate para acceder a ShopNova</p>
+    <p class="sub">Regístrate para acceder a AudioStudio</p>
     <form class="modal-form" id="formReg" novalidate>
       <div class="field">
-        <input type="text" id="rName" placeholder="Nombre completo" />
+        <input type="text" id="rName" placeholder="Nombre completo" autocomplete="name" />
         <span class="ico"><i class="fas fa-user"></i></span>
         <span class="errmsg" id="eRName"></span>
       </div>
       <div class="field">
-        <input type="email" id="rEmail" placeholder="Email" />
+        <input type="email" id="rEmail" placeholder="Email" autocomplete="email" />
         <span class="ico"><i class="fas fa-envelope"></i></span>
         <span class="errmsg" id="eREmail"></span>
       </div>
       <div class="field">
-        <input type="password" id="rPass" placeholder="Contrasena (min. 6 caracteres)" />
+        <input type="password" id="rPass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password" />
         <span class="ico" id="toggleRPass"><i class="fas fa-eye-slash"></i></span>
         <span class="errmsg" id="eRPass"></span>
       </div>
       <div class="field">
-        <input type="password" id="rPass2" placeholder="Confirmar contrasena" />
+        <input type="password" id="rPass2" placeholder="Confirmar contraseña" autocomplete="off" />
         <span class="ico"><i class="fas fa-lock"></i></span>
         <span class="errmsg" id="eRPass2"></span>
       </div>
       <div class="alert-ok hidden" id="okReg">
-        <i class="fas fa-circle-check"></i> Cuenta creada! Ahora puedes iniciar sesion.
+        <i class="fas fa-circle-check"></i> ¡Cuenta creada! Ahora puedes iniciar sesión.
       </div>
       <button type="submit" class="btn-primary">CREAR CUENTA</button>
     </form>
   </div>
 </div>
 
-<!-- MODAL RECUPERAR -->
+<!-- MODAL RECUPERAR CONTRASEÑA -->
 <div class="overlay hidden" id="modalForgot">
   <div class="modal-box">
     <button class="close-btn" id="closeForgot"><i class="fas fa-xmark"></i></button>
-    <h3>Recuperar Contrasena</h3>
+    <h3>Recuperar Contraseña</h3>
     <p class="sub">Ingresa tu email registrado</p>
     <form class="modal-form" id="formForgot" novalidate>
       <div class="field">
-        <input type="email" id="fEmail" placeholder="Tu email" />
+        <input type="email" id="fEmail" placeholder="Tu email" autocomplete="email" />
         <span class="ico"><i class="fas fa-envelope"></i></span>
         <span class="errmsg" id="eFEmail"></span>
       </div>
       <div class="alert-ok hidden" id="okForgot">
-        <i class="fas fa-circle-check"></i> Si el email existe, recibiras instrucciones.
+        <i class="fas fa-circle-check"></i> Si el email existe, recibirás instrucciones.
       </div>
       <button type="submit" class="btn-primary">ENVIAR</button>
     </form>
   </div>
 </div>
 
-<script src="/Comportamientos/signin.js"></script>
+<script src="../Comportamientos/signin.js"></script>
 
 </body>
 </html>

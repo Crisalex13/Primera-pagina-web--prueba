@@ -18,16 +18,6 @@ if (menuBtn && menuContainer) {
 // ========== TOGGLE DÍA/NOCHE DESLIZANTE ==========
 const themeCheckbox = document.getElementById('themeToggleCheckbox');
 
-function updateThemeBasedOnCheckbox(isLight) {
-  if (isLight) {
-    document.documentElement.classList.add('light-mode');
-    if (themeCheckbox) themeCheckbox.checked = true;
-  } else {
-    document.documentElement.classList.remove('light-mode');
-    if (themeCheckbox) themeCheckbox.checked = false;
-  }
-}
-
 function loadThemeWithToggle() {
   const savedTheme = localStorage.getItem('theme');
   const isLightMode = savedTheme === 'light';
@@ -108,33 +98,20 @@ if (themeCheckbox) {
 
 loadThemeWithToggle();
 
-function detectSystemThemeForToggle() {
-  const savedTheme = localStorage.getItem('theme');
-  
-  if (!savedTheme) {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (!prefersDark && themeCheckbox) {
-      themeCheckbox.checked = true;
-      document.documentElement.classList.add('light-mode');
-      localStorage.setItem('theme', 'light');
-    }
-  }
-}
-
-detectSystemThemeForToggle();
-
 // ========== FILTRO DE BÚSQUEDA Y CATEGORÍA ==========
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
 const cards = document.querySelectorAll('.card');
 
 function filterProducts() {
+  if (!searchInput || !categoryFilter) return;
+  
   const searchTerm = searchInput.value.toLowerCase();
   const category = categoryFilter.value;
 
   cards.forEach(card => {
-    const title = card.querySelector('h3').innerText.toLowerCase();
-    const description = card.querySelector('p').innerText.toLowerCase();
+    const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+    const description = card.querySelector('p')?.innerText.toLowerCase() || '';
     const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
     const matchesCategory = (category === 'all') || (card.dataset.category === category);
     
@@ -146,26 +123,21 @@ function filterProducts() {
   });
 }
 
-searchInput.addEventListener('input', filterProducts);
-categoryFilter.addEventListener('change', filterProducts);
+if (searchInput && categoryFilter) {
+  searchInput.addEventListener('input', filterProducts);
+  categoryFilter.addEventListener('change', filterProducts);
+}
 
-// ========== BOTONES INTERACTIVOS ==========
-document.querySelectorAll('.btn-perfil, .btn-register').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    console.log(`📢 Click en: ${btn.innerText}`);
-    alert(`🔔 ${btn.innerText} - Funcionalidad en desarrollo`);
-  });
-});
-
+// ========== BOTONES DE COMPRA ==========
 document.querySelectorAll('.card-content button').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const product = btn.closest('.card').querySelector('h3').innerText;
+    const product = btn.closest('.card')?.querySelector('h3')?.innerText || 'Producto';
     alert(`🛒 Agregaste "${product}" al carrito`);
   });
 });
 
-// Cerrar menú al hacer clic en items del menú
+// ========== CERRAR MENÚ AL HACER CLIC EN ITEMS ==========
 document.querySelectorAll('.more-button-list-item').forEach(item => {
   item.addEventListener('click', () => {
     if (menuContainer) menuContainer.classList.remove('active');
@@ -173,5 +145,254 @@ document.querySelectorAll('.more-button-list-item').forEach(item => {
   });
 });
 
-// Mensaje de bienvenida en consola
-console
+// ========== HEADER OCULTABLE AL HACER SCROLL ==========
+let lastScroll = 0;
+const header = document.querySelector('.header');
+const scrollThreshold = 50;
+
+if (header) {
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    if (currentScroll <= scrollThreshold) {
+      header.classList.remove('hide');
+      return;
+    }
+    
+    if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
+      header.classList.add('hide');
+    } else if (currentScroll < lastScroll) {
+      header.classList.remove('hide');
+    }
+    
+    lastScroll = currentScroll;
+  });
+}
+
+// ========== ABRIR SIDEBAR DESDE EL MENÚ ==========
+const configMenuItem = document.querySelector('.more-button-list-item:first-child');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const closeSidebarBtn = document.getElementById('closeSidebar');
+
+if (configMenuItem && sidebar) {
+  configMenuItem.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    if (sidebarOverlay) sidebarOverlay.classList.add('active');
+    if (menuContainer) menuContainer.classList.remove('active');
+  });
+}
+
+if (closeSidebarBtn) {
+  closeSidebarBtn.addEventListener('click', () => {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+  });
+}
+
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', () => {
+    if (sidebar) sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+  });
+}
+
+if (sidebar) {
+  sidebar.addEventListener('click', (e) => e.stopPropagation());
+}
+
+// ========== TOGGLE DE TEMA DENTRO DEL SIDEBAR ==========
+const themeToggleSidebar = document.getElementById('themeToggleSidebar');
+const themeOptions = document.querySelectorAll('.theme-option');
+
+function updateSidebarThemeUI(theme) {
+  themeOptions.forEach(opt => {
+    if (opt.getAttribute('data-theme') === theme) {
+      opt.classList.add('active');
+    } else {
+      opt.classList.remove('active');
+    }
+  });
+  
+  if (themeToggleSidebar) {
+    themeToggleSidebar.setAttribute('data-theme-state', theme);
+  }
+}
+
+function loadThemeInSidebar() {
+  const savedTheme = localStorage.getItem('theme');
+  const currentTheme = savedTheme === 'light' ? 'light' : 'dark';
+  updateSidebarThemeUI(currentTheme);
+}
+
+function setThemeFromSidebar(theme) {
+  if (theme === 'light') {
+    document.documentElement.classList.add('light-mode');
+    localStorage.setItem('theme', 'light');
+    showThemeNotification('☀️ Modo Día activado', '#f8f9fa');
+    if (themeCheckbox) themeCheckbox.checked = true;
+  } else {
+    document.documentElement.classList.remove('light-mode');
+    localStorage.setItem('theme', 'dark');
+    showThemeNotification('🌙 Modo Noche activado', '#1a1a2e');
+    if (themeCheckbox) themeCheckbox.checked = false;
+  }
+  updateSidebarThemeUI(theme);
+}
+
+themeOptions.forEach(option => {
+  option.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const theme = option.getAttribute('data-theme');
+    setThemeFromSidebar(theme);
+  });
+});
+
+if (themeToggleSidebar) {
+  themeToggleSidebar.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('theme-option')) {
+      const currentState = themeToggleSidebar.getAttribute('data-theme-state');
+      const newTheme = currentState === 'light' ? 'dark' : 'light';
+      setThemeFromSidebar(newTheme);
+    }
+  });
+}
+
+loadThemeInSidebar();
+
+// ========== OPCIONES DEL SIDEBAR ==========
+const languageSelect = document.getElementById('languageSelect');
+if (languageSelect) {
+  languageSelect.addEventListener('change', (e) => {
+    console.log(`🌐 Idioma cambiado a: ${e.target.value}`);
+  });
+}
+
+const notificationsToggle = document.getElementById('notificationsToggle');
+if (notificationsToggle) {
+  const savedNotifications = localStorage.getItem('notifications');
+  if (savedNotifications === 'false') {
+    notificationsToggle.checked = false;
+  }
+  
+  notificationsToggle.addEventListener('change', (e) => {
+    localStorage.setItem('notifications', e.target.checked);
+    console.log(`🔔 Notificaciones: ${e.target.checked ? 'Activadas' : 'Desactivadas'}`);
+  });
+}
+
+// ============================================================
+// ========== SESIÓN Y PERFIL DE USUARIO (CORREGIDO) ==========
+// ============================================================
+
+// Mostrar el rol del usuario en el header
+function loadUserStatus() {
+  const session = localStorage.getItem('sn_session');
+  const statusDisplay = document.getElementById('statusDisplay');
+  const userRoleText = document.getElementById('userRoleText');
+  
+  if (!statusDisplay || !userRoleText) return;
+  
+  if (session) {
+    try {
+      const user = JSON.parse(session);
+      const role = user.role;
+      
+      if (role === 'admin') {
+        userRoleText.textContent = 'Administrador';
+        statusDisplay.setAttribute('data-role', 'admin');
+        const icon = statusDisplay.querySelector('i');
+        if (icon) icon.className = 'fas fa-crown';
+      } else {
+        userRoleText.textContent = 'Cliente';
+        statusDisplay.setAttribute('data-role', 'user');
+        const icon = statusDisplay.querySelector('i');
+        if (icon) icon.className = 'fas fa-user';
+      }
+    } catch (e) {
+      userRoleText.textContent = 'Invitado';
+      const icon = statusDisplay.querySelector('i');
+      if (icon) icon.className = 'fas fa-user-circle';
+    }
+  } else {
+    userRoleText.textContent = 'Invitado';
+    const icon = statusDisplay.querySelector('i');
+    if (icon) icon.className = 'fas fa-user-circle';
+  }
+}
+
+// Botón Cerrar Sesión
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    const confirmar = confirm('¿Seguro que quieres cerrar sesión?');
+    if (confirmar) {
+      localStorage.removeItem('sn_session');
+      alert('👋 Sesión cerrada correctamente');
+      window.location.href = 'index.html';
+    }
+  });
+}
+
+// Botón Mi Perfil (UNIFICADO - sin duplicados)
+const perfilBtn = document.getElementById('btnPerfil');
+if (perfilBtn) {
+  // Eliminar eventos anteriores clonando el botón (opcional, pero seguro)
+  const newPerfilBtn = perfilBtn.cloneNode(true);
+  perfilBtn.parentNode.replaceChild(newPerfilBtn, perfilBtn);
+  
+  newPerfilBtn.addEventListener('click', () => {
+    const session = localStorage.getItem('sn_session');
+    
+    if (!session) {
+      // No hay sesión activa
+      const irLogin = confirm('⚠️ No has iniciado sesión.\n¿Quieres ir a la página de login?');
+      if (irLogin) {
+        window.location.href = 'Estructura/signin.html';
+      }
+    } else {
+      // Hay sesión activa - mostrar perfil
+      try {
+        const user = JSON.parse(session);
+        let mensaje = '📋 MI PERFIL\n\n';
+        mensaje += `👤 Nombre: ${user.name}\n`;
+        mensaje += `📧 Email: ${user.email}\n`;
+        mensaje += `👑 Rol: ${user.role === 'admin' ? 'Administrador' : 'Cliente'}\n\n`;
+        mensaje += '🚧 Próximamente: Editar perfil, historial de compras y más.';
+        
+        alert(mensaje);
+        
+        // Si quieres redirigir a una página de perfil dedicada:
+        // window.location.href = 'Estructura/perfil.html';
+        
+      } catch(e) {
+        console.error('Error al parsear sesión:', e);
+        alert('Error al cargar los datos del usuario. Por favor, vuelve a iniciar sesión.');
+        localStorage.removeItem('sn_session');
+        window.location.href = 'Estructura/signin.html';
+      }
+    }
+  });
+}
+
+// Botón Crear Cuenta (solo redirige, sin alert duplicado)
+const registerBtn = document.querySelector('.btn-register');
+if (registerBtn) {
+  registerBtn.addEventListener('click', (e) => {
+    // No hacer nada adicional, el onclick del HTML ya redirige
+    console.log('📝 Redirigiendo a registro...');
+  });
+}
+
+// Inicializar todo al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  loadUserStatus();
+  console.log('🎧 AudioStudio - Tu tienda de sonido profesional');
+});
+
+// Escuchar cambios en localStorage (útil si se cierra sesión en otra pestaña)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'sn_session') {
+    loadUserStatus();
+  }
+});

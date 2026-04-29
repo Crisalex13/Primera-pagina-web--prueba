@@ -24,35 +24,32 @@
       </button>
       <ul class="more-button-list">
         <li class="more-button-list-item"><i class="fas fa-sliders-h"></i> <span>Configuración</span></li>
-        <li class="more-button-list-item"><i class="fas fa-copy"></i> <span>Copiar</span></li>
-        <li class="more-button-list-item"><i class="fas fa-share-alt"></i> <span>Compartir</span></li>
-        <li class="more-button-list-item"><i class="fas fa-trash"></i> <span>Eliminar</span></li>
+        <li class="more-button-list-item"><i class="fas fa-cerrarsesion"></i> <span>Cerrar sesion</span></li>
       </ul>
     </div>
 
     <div class="avatar-wrap">
-      <img class="logoleon" src="https://placehold.co/200x200/6c3ce1/white?text=AS" alt="AudioStudio">
+      <img class="logoleon" src="Imagenes/audio studio.png" alt="AudioStudio">
     </div>
 
     <div class="logo">Audio<span>Studio</span></div>
 
     <nav class="nav">
-      <a href="#" class="nav-link active">Catálogo</a>
-      <a href="#" class="nav-link">Agregar</a>
+      <a href="index.html" class="nav-link active">Catálogo</a>
+      <a href="#" class="nav-link">Listas</a>
     </nav>
 
-    <!-- TOGGLE DÍA/NOCHE DESLIZANTE -->
-    <div class="theme-switch-wrapper">
-      <span class="theme-icon"><i class="fas fa-sun"></i></span>
-      <label class="theme-switch">
-        <input type="checkbox" id="themeToggleCheckbox">
-        <span class="slider round"></span>
-      </label>
-      <span class="theme-icon"><i class="fas fa-moon"></i></span>
+    <!-- STATUS: Administrador / Cliente (solo texto) -->
+    <div class="status-display" id="statusDisplay">
+      <i class="fas fa-user-circle"></i>
+      <span id="userRoleText">Cargando...</span>
     </div>
 
-    <button class="btn-perfil"><i class="fas fa-user-circle"></i> Mi Perfil</button>
-    <button class="btn-register"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
+    <button class="btn-perfil" id="btnPerfil"><i class="fas fa-user-circle"></i> Mi Perfil</button>
+    
+    <button class="btn-logout" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> Salir
+    </button>
   </div>
 </header>
 
@@ -77,7 +74,7 @@
 <main class="main">
   <div class="gallery" id="productGallery">
     <div class="card" data-category="audifonos">
-      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=250&fit=crop" alt="Audífonos">
+      <img src="Imagenes/audifonos.jpg" alt="Audífonos">
       <div class="card-content">
         <h3>Audífonos Pro X</h3>
         <p>Sonido envolvente 3D, cancelación de ruido</p>
@@ -86,7 +83,7 @@
     </div>
     <div class="card" data-category="parlantes">
       <div class="badge">Oferta</div>
-      <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400&h=250&fit=crop" alt="Parlante">
+      <img src="Imagenes/bocina.jpg" alt="Parlante">
       <div class="card-content">
         <h3>Parlante Boom 360</h3>
         <p>Potencia 80W, Bluetooth 5.2</p>
@@ -94,7 +91,7 @@
       </div>
     </div>
     <div class="card" data-category="microfonos">
-      <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&h=250&fit=crop" alt="Micrófono">
+      <img src="Imagenes/micrófono.jpg" alt="Micrófono">
       <div class="card-content">
         <h3>Micrófono StudioCast</h3>
         <p>Patrón cardioide, ideal para podcast</p>
@@ -102,7 +99,7 @@
       </div>
     </div>
     <div class="card" data-category="audifonos">
-      <img src="https://images.unsplash.com/photo-1618366712010-f4c7e9f1d315?w=400&h=250&fit=crop" alt="Audífonos">
+      <img src="Imagenes/audifonos 2.jpg" alt="Audífonos">
       <div class="card-content">
         <h3>Earbuds AirFloat</h3>
         <p>Inalámbricos, 30h de batería</p>
@@ -136,13 +133,59 @@
       <div class="footer-map-wrap">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.559151371361!2d-99.1332!3d19.4326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff35f5bd1563%3A0x6c366f0e2de02ff7!2sCiudad%20de%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1700000000000" allowfullscreen loading="lazy"></iframe>
       </div>
-      <p class="map-hint">📍 Ciudad de México · Cambia el mapa en el código</p>
+      <p class="map-hint">Ciudad de México · Cambia el mapa en el código</p>
     </div>
   </div>
   <div class="footer-bottom">
     <p>© 2026 AudioStudio - Hecho con <i class="fas fa-heart" style="color:#dc2626"></i> para amantes del sonido</p>
   </div>
 </footer>
+
+<!-- Sidebar de Configuración -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3>Configuración</h3>
+    <button class="sidebar-close" id="closeSidebar">&times;</button>
+  </div>
+  <div class="sidebar-content">
+    <div class="settings-item">
+      <span class="settings-label">
+        <i class="fas fa-palette"></i> Tema
+      </span>
+      <div class="theme-toggle-sidebar" id="themeToggleSidebar">
+        <span class="theme-option active" data-theme="light">
+          <i class="fas fa-sun"></i> Día
+        </span>
+        <div class="slider-indicator"></div>
+        <span class="theme-option" data-theme="dark">
+          <i class="fas fa-moon"></i> Noche
+        </span>
+      </div>
+    </div>
+    
+    <div class="settings-item">
+      <span class="settings-label">
+        <i class="fas fa-language"></i> Idioma
+      </span>
+      <select class="settings-select" id="languageSelect">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    
+    <div class="settings-item">
+      <span class="settings-label">
+        <i class="fas fa-bell"></i> Notificaciones
+      </span>
+      <label class="switch">
+        <input type="checkbox" id="notificationsToggle" checked>
+        <span class="slider-small round"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script src="Comportamientos/pagina web.js"></script>
 
